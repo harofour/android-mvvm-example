@@ -1,26 +1,23 @@
 package com.example.mvvm_example.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.mvvm_example.R
-import com.example.mvvm_example.adapter.MovieAdapter
-import com.example.mvvm_example.databinding.FragmentSearchResultBinding
+import com.example.mvvm_example.databinding.FragmentHomeBinding
 import com.example.mvvm_example.mvvm.MovieViewModel
 
-class SearchResultFragment : Fragment() {
-    val TAG: String = "로그"
-    private var _binding: FragmentSearchResultBinding? = null
+class HomeFragment : Fragment() {
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var movieAdapter: MovieAdapter
+    private lateinit var navController: NavController
     private val viewModel: MovieViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -28,26 +25,26 @@ class SearchResultFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSearchResultBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
 
-        bindRecyclerView()
+        bindViews()
     }
 
-    private fun bindRecyclerView() {
-        movieAdapter = MovieAdapter { }
-        binding.recyclerView.apply {
-            adapter = movieAdapter
-            layoutManager = GridLayoutManager(this@SearchResultFragment.context, 2)
+    private fun bindViews() {
+        binding.searchBtn.setOnClickListener {
+            viewModel.searchMovieData(
+                getString(R.string.api_key), // Enter Your API_KEY
+                binding.searchTermEditText.text.toString()
+            )
+            binding.searchTermEditText.setText("")
+            navController.navigate(R.id.action_homeFragment_to_searchResultFragment)
         }
-
-        viewModel.getMovieData().observe(viewLifecycleOwner, {
-            movieAdapter.submitList(it)
-        })
     }
 
     override fun onDestroy() {
