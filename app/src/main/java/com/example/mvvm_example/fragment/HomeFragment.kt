@@ -42,6 +42,7 @@ class HomeFragment : Fragment() {
                 getString(R.string.api_key), // Enter Your API_KEY
                 binding.searchTermEditText.text.toString()
             )
+            viewModel.searchTerm = binding.searchTermEditText.text.toString()
             binding.searchTermEditText.setText("")
             navController.navigate(R.id.action_homeFragment_to_searchResultFragment)
         }

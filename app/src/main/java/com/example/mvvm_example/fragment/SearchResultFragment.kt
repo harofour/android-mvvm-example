@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.mvvm_example.R
@@ -16,12 +18,12 @@ import com.example.mvvm_example.databinding.FragmentSearchResultBinding
 import com.example.mvvm_example.mvvm.MovieViewModel
 
 class SearchResultFragment : Fragment() {
-    val TAG: String = "로그"
     private var _binding: FragmentSearchResultBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var movieAdapter: MovieAdapter
     private val viewModel: MovieViewModel by activityViewModels()
+    private lateinit var navController: NavController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +36,21 @@ class SearchResultFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
 
+        initViews()
+        bindViews()
         bindRecyclerView()
+    }
+
+    private fun initViews() {
+        binding.topAppBar.title = viewModel.searchTerm
+    }
+
+    private fun bindViews() {
+        binding.topAppBar.setNavigationOnClickListener {
+            navController.popBackStack()
+        }
     }
 
     private fun bindRecyclerView() {
